@@ -33,10 +33,10 @@ def get_completions_from_messages(user_input,model="gpt-4"):
             c) Simple 4-step evening routine
             d) Always include sunscreen SPF 30+ recommendation
             e) General lifestyle tips (water intake, diet, etc.)
+            f) Round up by offering to help with any future concerns
 
         3. For Users Without Skin Concerns:
         - Compliment their skin maintenance
-        - Share a preventive skincare tip
         - Offer to help with any future concerns
 
         4. Product Recommendations:
