@@ -1,4 +1,4 @@
-# SkinFix - AI for Africa Hackathon Project
+# SkinFix
 
 ## Overview
 
