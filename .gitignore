@@ -8,4 +8,4 @@ node_modules/
 *.log
 
 # Ignore environment variable files
-config.toml
+secrets.toml
