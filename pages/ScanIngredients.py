@@ -4,13 +4,9 @@ from PIL import Image,ImageFilter
 import numpy as np
 from openai import OpenAI
 import openai
-import toml
-
-# Load environment variables from .env file
-config = toml.load('config.toml')
 
 # Access the OPENAI_API_KEY
-openai.api_key = config['settings']['OPENAI_API_KEY']
+openai.api_key = st.secrets['settings']['OPENAI_API_KEY']
 
 pytesseract.pytesseract.tesseract_cmd = '/opt/homebrew/bin/tesseract'
 

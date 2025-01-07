@@ -1,13 +1,9 @@
 import streamlit as st
 from openai import OpenAI
 import openai
-import toml
-
-# Load environment variables from .env file
-config = toml.load('config.toml')
 
 # Access the OPENAI_API_KEY
-openai.api_key = config['settings']['OPENAI_API_KEY']
+openai.api_key = st.secrets['settings']['OPENAI_API_KEY']
 
 
 def get_completions_from_messages(user_input,model="gpt-4"):
