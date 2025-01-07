@@ -11,7 +11,7 @@ background_color = "#FFEBEB"
 st.markdown(f"""
     <style>
         body {{
-            color: #484848;
+            color: #FFEBEB";
             background-color: {background_color};
         }}
         .st-bw {{
