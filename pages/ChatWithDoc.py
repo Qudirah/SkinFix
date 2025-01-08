@@ -3,7 +3,7 @@ from openai import OpenAI
 import openai
 
 # Access the OPENAI_API_KEY
-openai.api_key = st.secrets['settings']['OPENAI_API_KEY']
+openai.api_key = st.secrets['OPENAI_API_KEY']
 
 
 def get_completions_from_messages(user_input,model="gpt-4"):

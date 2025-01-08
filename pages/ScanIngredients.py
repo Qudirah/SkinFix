@@ -6,7 +6,7 @@ from openai import OpenAI
 import openai
 
 # Access the OPENAI_API_KEY
-openai.api_key = st.secrets['settings']['OPENAI_API_KEY']
+openai.api_key = st.secrets['OPENAI_API_KEY']
 
 pytesseract.pytesseract.tesseract_cmd = '/opt/homebrew/bin/tesseract'
 
