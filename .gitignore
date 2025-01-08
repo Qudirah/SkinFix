@@ -8,5 +8,4 @@ node_modules/
 *.log
 
 # Ignore environment variable files
-/.streamlit
-secrets.toml
+.streamlit
