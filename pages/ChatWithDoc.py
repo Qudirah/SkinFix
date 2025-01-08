@@ -96,7 +96,7 @@ st.subheader("Hello! Chat with Skin Doc live to talk about your concerns!")
 
 # Initialize session state variables
 if "openai_model" not in st.session_state:
-    st.session_state["openai_model"] = "gpt-3.5-turbo"
+    st.session_state["openai_model"] = "gpt-4"
 
 if "messages" not in st.session_state:
     st.session_state.messages = []
