@@ -35,9 +35,9 @@ SkinFix is designed to analyze the ingredients of skincare products and provide 
 
 To use SkinFix, follow these steps:
 
-1. Clone the repository: `git clone https://github.com/Qudirah/AIForAfricaHackathon.git`
+1. Clone the repository: `git clone https://github.com/Qudirah/SkinFix.git`
 2. Install dependencies: `pip install -r requirements.txt`
-3. Run the application: `python skinfix.py`
+3. Run the application: `streamlit run skinfix.py`
 4. Follow the on-screen instructions to input ingredients or interact with the AI Skin Doctor Bot.
 
 ## Dependencies
