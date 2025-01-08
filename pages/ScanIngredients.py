@@ -1,5 +1,6 @@
 import streamlit as st
 import pytesseract
+import platform
 from PIL import Image,ImageFilter
 import numpy as np
 from openai import OpenAI
@@ -12,7 +13,11 @@ os.environ['OPENAI_API_KEY'] = st.secrets['OPENAI_API_KEY']
 # Access the OPENAI_API_KEY
 openai.api_key = st.secrets['OPENAI_API_KEY']
 
-pytesseract.pytesseract.tesseract_cmd = '/opt/homebrew/bin/tesseract'
+# Configure tesseract path based on OS
+if platform.system() == "Darwin":  # macOS
+    pytesseract.pytesseract.tesseract_cmd = '/opt/homebrew/bin/tesseract'
+else:  # Linux (deployment environment)
+    pytesseract.pytesseract.tesseract_cmd = '/usr/bin/tesseract'
 
 def format_picture(picture):
     picture = Image.open(picture)
