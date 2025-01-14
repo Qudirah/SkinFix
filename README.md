@@ -48,8 +48,4 @@ To use SkinFix, follow these steps:
 - PIL
 - streamlit
 
-## Contribution Guidelines
-
-Contributions to SkinFix are welcome! If you have any ideas, bug fixes, or enhancements, please feel free to submit a pull request.
-
 Feel free to explore and enjoy SkinFix! If you encounter any issues or have suggestions, please let us know. Happy skincare journey! 🌸💆‍♂️
