@@ -28,7 +28,7 @@ def format_picture(picture):
     text = pytesseract.image_to_string(picture)
     return text
 
-def get_completions_from_messages(user_input, model="gpt-4"):
+def get_completions_from_messages(user_input, model="gpt-4",stream=True):
     messages = [
     {"role": "system", "content": """
         You are a sassy skincare expert with extensive knowledge of cosmetic ingredients. Your role is to:
@@ -89,9 +89,10 @@ def get_completions_from_messages(user_input, model="gpt-4"):
     client = OpenAI()
     chat_completion = client.chat.completions.create(
     model = model,
-    messages=messages
+    messages=messages,
+    stream=True
 )
-    return chat_completion.choices[0].message.content.replace('\n',' ')
+    return chat_completion
 
 # Set page title and background color
 st.set_page_config(page_title='SkinFix', page_icon='🌸', layout='wide')
@@ -114,7 +115,17 @@ if upload_option == "Upload a Picture":
 
             if submit:
                 text = text.lower().replace('\n', ' ')
-                st.warning(get_completions_from_messages(user_input=text))
+                # message_placeholder = st.empty()
+                full_response = ""
+                # Stream the response for better UX
+                for chunk in get_completions_from_messages(
+                    user_input=text
+                ):
+                    if chunk.choices[0].delta.content is not None:
+                        full_response += chunk.choices[0].delta.content
+                        # message_placeholder.markdown(full_response + "▌")
+                # message_placeholder.markdown(full_response)
+                st.warning(full_response)
         else:
             st.warning('Ingredients not detected. Please try again.')
 
@@ -131,7 +142,17 @@ elif upload_option == "Take a Picture to scan":
 
             if submit:
                 text = text.lower().replace('\n', ' ')
-                st.warning(get_completions_from_messages(user_input=text))
+                # message_placeholder = st.empty()
+                full_response = ""
+                # Stream the response for better UX
+                for chunk in get_completions_from_messages(
+                    user_input=text
+                ):
+                    if chunk.choices[0].delta.content is not None:
+                        full_response += chunk.choices[0].delta.content
+                        # message_placeholder.markdown(full_response + "▌")
+                # message_placeholder.markdown(full_response)
+                st.warning(full_response)
         else:
             st.warning('Ingredients not detected. Please try again.')
 else:
@@ -139,5 +160,15 @@ else:
     text = text.lower().replace('\n', ' ')
     submit = st.button('Submit')
     if submit:
-        text = text.lower().replace('\n', ' ')
-        st.warning(get_completions_from_messages(user_input=text))
+                text = text.lower().replace('\n', ' ')
+                # message_placeholder = st.empty()
+                full_response = ""
+                # Stream the response for better UX
+                for chunk in get_completions_from_messages(
+                    user_input=text
+                ):
+                    if chunk.choices[0].delta.content is not None:
+                        full_response += chunk.choices[0].delta.content
+                        # message_placeholder.markdown(full_response + "▌")
+                # message_placeholder.markdown(full_response)
+                st.warning(full_response)

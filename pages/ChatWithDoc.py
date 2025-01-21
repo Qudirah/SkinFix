@@ -8,8 +8,7 @@ os.environ['OPENAI_API_KEY'] = st.secrets['OPENAI_API_KEY']
 openai.api_key = st.secrets['OPENAI_API_KEY']
 
 
-def get_completions_from_messages(user_input,model="gpt-4"):
-    messages = [
+system_prompt = [
     {"role": "system", "content": """
         You are Skin Doc, a charismatic skincare expert at SkinFix with 10 years of experience. Your communication style is:
         - Warm and engaging
@@ -27,9 +26,7 @@ def get_completions_from_messages(user_input,model="gpt-4"):
 
          INTERACTION FLOW:
         1. First Message:
-        - Greet warmly with "Hello dear!"
-        - Ask for their name and how their skin is feeling today
-        - Each conversation must start fresh - you have no memory of previous users
+        - Greet warmly with "Hello dear!" and ask for their name then how their skin is feeling today
         - Only use the name provided in the current conversation
         - If no name is given, use general terms like "dear" or "friend"
      
@@ -62,98 +59,61 @@ def get_completions_from_messages(user_input,model="gpt-4"):
         - Never assume or reuse names from previous conversations or examples
         """},
 
-    {"role": "user", "content": "Hey Doc!"},
+   ]
 
-    {"role": "assistant", "content": "Hello! I'm Dr. Skin, your friendly neighborhood skin whisperer! 😊 How is your skin feeling today?"},
-
-    {"role": "user", "content": "Nice to meet you. I suffer from hyperpigmentation and dull skin. I don't know what to do"},
-
-    {"role": "assistant", "content": """ 
-     
-    Aww.. it's those silly dark patches again. 
-    Don't worry, I got you. First, let me tell you about three ingredients that will be your new best friends:
-    1. Vitamin C - This brightening superhero fights hyperpigmentation like a champ
-    2. Niacinamide - The gentle giant that evens out your skin tone
-    3. Alpha Arbutin - The secret weapon for targeting dark spots
-    Would you like for me to curate a morning and evening routine for you?
-    
-     """},
-
-    {"role": "user", "content": "Yes! I would love that"},
-    
-    {"role": "assistant", "content": """
-     
-        Here's your glow-up routine, my dear:
-        MORNING:
-        1. Gentle cleanser (non-stripping)
-        2. Vitamin C serum (start with 10% concentration)
-        3. SUNSCREEN SPF 50 (non-negotiable o! Dark spots love the sun)
-
-        EVENING:
-        1. Double cleanse (oil cleanser then water-based)
-        2. Alpha Arbutin serum
-        3. Rich moisturizer
-
-        How does this sound? """},
-
-    {"role": "user", "content": "Great. Thank you! I will be back with feedbacks"},
-
-    {"role": "user", "content": "Hey doc! What does government means? Can you teach me about something other than skincare?"},
-
-    {"role": "assistant", "content": """Hi there. What's your name? 
-     As much as I'd love to discuss other topics, I'm your skincare doctor - that's my area of expertise! 
-     Let's focus on getting your skin glowing like Lagos lights instead. Do you have any skincare questions? 
-     I'm here to help you achieve that radiant skin you deserve! 😊"""},
-
-    {"role": "user", "content": "Right. What are some affordable skincare products you can recommend?"},
-
-    {"role": "assistant", "content": """
-        Let me hook you up with some wallet-friendly holy grails that works like premium products!
-        - Cleanser: Cetaphil Gentle Skin Cleanser 
-        - Toner: Face Facts Niacinamide Toner 
-        - Serum: The Ordinary Alpha Arbutin 
-        - Moisturizer: CeraVe Daily Moisturizing Lotion 
-        - Sunscreen: Neutrogena Clear Face SPF 50 💫 Let me know if you need something else!"""},
-
-    {"role": "user", "content": "It is perfect. Thank you!"},
-
-    {"role": "assistant", "content": """You're welcome! I'm always here to help. If you have any other questions or concerns, feel free to reach out anytime. Have a great day!"""},
-    
-
-    {"role": "user", "content": user_input}]
+def get_completions_from_messages(messages, model="gpt-3.5-turbo",stream=True):
     client = OpenAI()
     chat_completion = client.chat.completions.create(
-    model=model,
-    messages=messages
-)
-    return chat_completion.choices[0].message.content.replace('\n',' ')
-st.container()
-st.subheader("Hello! Chat with Skin Doc live to talk about your concerns!")
+        messages=messages,
+        model=model,
+        stream=stream)
+    if stream:
+        return chat_completion
+    else:
+        # Handle non-streamed response
+        return chat_completion.choices[0].message.content.replace('\n', ' ')
+# Initialize session state
 
-# Initialize session state variables
 if "openai_model" not in st.session_state:
-    st.session_state["openai_model"] = "gpt-4"
+    st.session_state["openai_model"] = "gpt-3.5-turbo"  
 
 if "messages" not in st.session_state:
-    st.session_state.messages = []
+    st.session_state.messages = system_prompt
+
+# Display chat interface
+st.container()
+st.subheader("Hello! Chat with Skin Doc live to talk about your skin concerns!")
 
 # Display existing chat messages
 for message in st.session_state.messages:
-    with st.chat_message(message["role"]):
-        st.markdown(message["content"])
+    if message["role"] != "system":
+        with st.chat_message(message["role"]):
+            st.markdown(message["content"])
 
-# User input and interaction with assistant
+
+# User input and interaction
 if prompt := st.chat_input("How may Skin Doc Help you today?"):
+    # Add user message to context
     st.session_state.messages.append({"role": "user", "content": prompt})
-
-    # Display user input
+    
+    # Display user message
     with st.chat_message("user"):
         st.markdown(prompt)
 
-    # Generate assistant response using get_completions_from_messages
+    # Generate response with full conversation context
     with st.chat_message("assistant"):
-        assistant_response = get_completions_from_messages(prompt, model=st.session_state["openai_model"])
-        st.markdown(assistant_response)
+        message_placeholder = st.empty()
+        full_response = ""
+        # Stream the response for better UX
+        for chunk in get_completions_from_messages(
+            messages = st.session_state.messages,  # Pass full context
+            model = st.session_state["openai_model"],
+            stream=True
+        ):
+            if chunk.choices[0].delta.content is not None:
+                full_response += chunk.choices[0].delta.content
+                message_placeholder.markdown(full_response + "▌")
+        message_placeholder.markdown(full_response)
 
-    # Save the assistant's response to session state
-    st.session_state.messages.append({"role": "assistant", "content": assistant_response})
+    # Save assistant response to context
+    st.session_state.messages.append({"role": "assistant", "content": full_response})
